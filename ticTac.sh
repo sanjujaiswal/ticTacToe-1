@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 
 #who play first
 function whoPlayFirst(){
@@ -16,7 +16,22 @@ function reset(){
 	echo "Tic Tac Toe Game"
 	currentPlayer=$( whoPlayFirst $(()) );
 	gameStatus=1;
-	declare -A board;
+	initalize
 }
+
+#initialize board
+function initalize(){
+   for (( rowPosition=1;rowPosition<=3;rowPosition++ ))
+   do
+      echo "---------"
+      for (( columnPosition=1;columnPosition<=3;columnPosition++ ))
+      do
+         board[$rowPosition,$columnPosition]="-"
+      done
+      echo "| ${board[@]} |"
+   done
+	echo "---------"
+}
+
 reset
 echo $currentPlayer
