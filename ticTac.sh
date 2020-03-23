@@ -2,12 +2,16 @@
 
 #constants
 TOTALCOUNT=9;
+COMPUTER="0"
+ROW=3;
+COLUMN=3;
 
 #variables
 moveCount=1;
 
 #declare array
 declare -A board
+
 #who play first
 function whoPlayFirst(){
 	randomPlayer=$((RANDOM%2))
@@ -28,9 +32,9 @@ function reset(){
 }
 #initialize board
 function initalize(){
-   for (( rowPosition=1;$rowPosition<=3;rowPosition++ ))
+   for (( rowPosition=1;$rowPosition<=$ROW;rowPosition++ ))
    do
-      for (( columnPosition=1;$columnPosition<=3;columnPosition++ ))
+      for (( columnPosition=1;$columnPosition<=$COLUMN;columnPosition++ ))
       do
          board[$rowPosition,$columnPosition]="-"
       done
@@ -42,9 +46,9 @@ function initalize(){
 # print board
 function printBoard(){
 	echo "---------------"
-	for (( row=1;row<=3;row++ ))
+	for (( row=1;row<=$ROW;row++ ))
 	do
-		for (( column=1;column<=3;column++ ))
+		for (( column=1;column<=$COLUMN;column++ ))
 		do
 			echo -e "| ${board[$row,$column]} | \c"
 		done
@@ -66,7 +70,7 @@ function changePlayer(){
 #check win
 function checkWin(){
 	gameStatus=0;
-	for (( i=1;i<=3;i++ ))
+	for (( i=1;i<=$ROW;i++ ))
 	do
 		if [[ ${board[$i,1]} == $currentPlayer && ${board[$i,1]} == ${board[$i,2]} && ${board[$i,1]} == ${board[$i,3]} ]]
 		then
@@ -77,17 +81,16 @@ function checkWin(){
 			gameStatus=1;
 		fi
 	done
-	
+
 	if [[ ${board[1,1]} == $currentPlayer &&  ${board[1,1]} == ${board[2,2]} && ${board[1,1]} == ${board[3,3]} ]]
 	then
 		gameStatus=1;
 	fi
-	
+
 	if [[ ${board[1,3]} == $currentPlayer && ${board[1,3]} == ${board[2,2]} && ${board[1,3]} == ${board[3,1]} ]]
 	then
 		gameStatus=1;
 	fi
-	
 	echo $gameStatus
 }
 
@@ -108,17 +111,37 @@ function placeMark(){
 	fi
 }
 
+#calculate column
+function calColumn(){
+	if [[ $1%$COLUMN -eq 0 ]]
+	then
+		column=$COLUMN;
+	else
+		column=$(($1%$COLUMN))
+	fi
+	echo $column
+}
+
 #start execution
 reset
 while [[ $moveCount -le $TOTALCOUNT ]]
 do
-	read -p "Enter row " row
-	read -p "Enter column " column
-	placeMark $row $column
+	if [[ $currentPlayer == x ]]
+	then
+		read -p "Enter position between 1-9 : " position
+		#calculate row and column
+		row=$(((($position-1)/$ROW)+1))
+		column=$( calColumn $position ) 
+		placeMark $row $column
+	else
+		row=$(((RANDOM%3)+1))
+		column=$(((RANDOM%3)+1))
+		placeMark $row $column
+	fi
 	((moveCount++)) 
 done
 
 if [[ $gameStatus -eq 0 ]]
 then
 	echo "Match tie ! "
-fi 
+fi
