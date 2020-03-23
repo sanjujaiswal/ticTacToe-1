@@ -106,6 +106,7 @@ function placeMark(){
 			exit
 		fi
 		changePlayer $currentPlayer
+		((moveCount++))
 	else
 		echo "Already occupied"
 	fi
@@ -123,7 +124,7 @@ function calColumn(){
 }
 
 # check win before play
-function playToWin(){
+function playToWinAndBlock(){
 	for (( row=1;row<=$ROW;row++ ))
 	do
 		for (( column=1;column<=$COLUMN;column++ ))
@@ -135,6 +136,18 @@ function playToWin(){
 				if [[ $gameStatus -eq 0 ]]
 				then
 					board[$row,$column]="-"
+				elif [[ $gameStatus -eq 1 && ${board[$row,$column]} -eq $currentPlayer ]]
+				then
+					printBoard
+					echo "$currentPlayer wins ! "
+					exit
+				elif [[ $gameStatus -eq 1 ]]
+				then
+					board[$row,$column]=$currentPlayer
+					printBoard
+					gameStatus=0;
+					((moveCount++))
+					break
 				fi
 			fi
 		done
@@ -153,12 +166,11 @@ do
 		column=$( calColumn $position ) 
 		placeMark $row $column
 	else
-		playToWin
+		playToWinAndBlock
 		row=$(((RANDOM%3)+1))
 		column=$(((RANDOM%3)+1))
 		placeMark $row $column
-	fi
-	((moveCount++)) 
+	fi 
 done
 
 if [[ $gameStatus -eq 0 ]]
