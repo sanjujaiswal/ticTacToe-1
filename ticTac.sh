@@ -2,12 +2,12 @@
 
 #constants
 TOTALCOUNT=9;
-COMPUTER="0"
 ROW=3;
 COLUMN=3;
 
 #variables
 moveCount=1;
+computerPlayer="0";
 
 #declare array
 declare -A board
@@ -19,7 +19,7 @@ function whoPlayFirst(){
 	then
 		echo "x"
 	else
-		echo "0"
+		echo $computerPlayer
 	fi
 }
 
@@ -91,7 +91,6 @@ function checkWin(){
 	then
 		gameStatus=1;
 	fi
-	echo $gameStatus
 }
 
 #write mark on board
@@ -100,7 +99,8 @@ function placeMark(){
 	then
 		board[$1,$2]=$currentPlayer
 		printBoard
-		if [[ $( checkWin $(()) ) -eq 1 ]]
+		checkWin
+		if [[ $gameStatus -eq 1 ]]
 		then
 			echo "$currentPlayer wins"
 			exit
@@ -122,6 +122,25 @@ function calColumn(){
 	echo $column
 }
 
+# check win before play
+function playToWin(){
+	for (( row=1;row<=$ROW;row++ ))
+	do
+		for (( column=1;column<=$COLUMN;column++ ))
+		do
+			if [[ ${board[$row,$column]} == - ]]
+			then
+				board[$row,$column]=$currentPlayer
+				checkWin
+				if [[ $gameStatus -eq 0 ]]
+				then
+					board[$row,$column]="-"
+				fi
+			fi
+		done
+	done
+}
+
 #start execution
 reset
 while [[ $moveCount -le $TOTALCOUNT ]]
@@ -134,6 +153,7 @@ do
 		column=$( calColumn $position ) 
 		placeMark $row $column
 	else
+		playToWin
 		row=$(((RANDOM%3)+1))
 		column=$(((RANDOM%3)+1))
 		placeMark $row $column
