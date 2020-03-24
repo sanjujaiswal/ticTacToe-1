@@ -31,6 +31,7 @@ function reset(){
 	gameStatus=0;
 	initalize
 }
+
 #initialize board
 function initalize(){
    for (( rowPosition=1;$rowPosition<=$ROW;rowPosition++ ))
@@ -42,7 +43,6 @@ function initalize(){
    done
 	printBoard
 }
-
 
 # print board
 function printBoard(){
@@ -82,12 +82,18 @@ function checkWin(){
 			gameStatus=1;
 		fi
 	done
+<<<<<<< HEAD
 
+=======
+>>>>>>> UC9_availableCorner
 	if [[ ${board[1,1]} == $1 &&  ${board[1,1]} == ${board[2,2]} && ${board[1,1]} == ${board[3,3]} ]]
 	then
 		gameStatus=1;
 	fi
+<<<<<<< HEAD
 
+=======
+>>>>>>> UC9_availableCorner
 	if [[ ${board[1,3]} == $1 && ${board[1,3]} == ${board[2,2]} && ${board[1,3]} == ${board[3,1]} ]]
 	then
 		gameStatus=1;
@@ -113,6 +119,7 @@ function placeMark(){
 	fi
 }
 
+
 #calculate column
 function calColumn(){
 	if [[ $1%$COLUMN -eq 0 ]]
@@ -124,7 +131,37 @@ function calColumn(){
 	echo $column
 }
 
+<<<<<<< HEAD
 #block user if he/she is winning
+=======
+#take available corners if niether of player wins
+function availableCorners(){
+	if [[ $flag -eq 1 ]]
+	then
+		for (( row=1;row<=$ROW;$((row+=2)) ))
+		do
+			for (( column=1;column<=$COLUMN;$((column+=2)) ))
+			do
+				if [[ ${board[$row,$column]} == "-" ]]
+				then
+					board[$row,$column]=$currentPlayer
+					printBoard
+					gameStatus=0;
+					((moveCount++))
+					flag=0;
+				fi
+			done
+			if [[ $flag -eq 0 ]]
+			then
+				break;
+			fi
+		done
+	fi
+}
+
+
+#check play win and block user if he/she is winning
+>>>>>>> UC9_availableCorner
 function playWinAndBlockUser(){
 	flag=1;
 	for (( row=1;row<=$ROW;row++ ))
@@ -161,7 +198,10 @@ function playWinAndBlockUser(){
 	done
 }
  
+<<<<<<< HEAD
 
+=======
+>>>>>>> UC9_availableCorner
 #start execution
 reset
 while [[ $moveCount -le $TOTALCOUNT ]]
@@ -176,7 +216,12 @@ do
 	else
 		player="x";
 		playWinAndBlockUser $currentPlayer
+<<<<<<< HEAD
 		playWinAndBlockUser $player 
+=======
+		playWinAndBlockUser $player
+		availableCorners $currentPlayer 
+>>>>>>> UC9_availableCorner
 		if [ $flag -eq 1 ]
 		then
 			row=$(((RANDOM%3)+1))
@@ -187,7 +232,6 @@ do
 		fi
 	fi 
 done
-
 if [[ $gameStatus -eq 0 ]]
 then
 	echo "Match tie ! "
