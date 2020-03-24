@@ -13,6 +13,7 @@ flag=1;
 #declare array
 declare -A board
 
+
 #who play first
 function whoPlayFirst(){
 	randomPlayer=$((RANDOM%2))
@@ -205,32 +206,61 @@ function playWinAndBlockUser(){
 	done
 }
  
-#start execution
-reset
-while [[ $moveCount -le $TOTALCOUNT ]]
-do
-	if [[ $currentPlayer == x ]]
-	then
-		read -p "Enter position between 1-9 : " position
-		#calculate row and column
-		row=$(((($position-1)/$ROW)+1))
-		column=$( calColumn $position ) 
-		placeMark $row $column
-	else
-		player="x";
-		playWinAndBlockUser $currentPlayer
-		playWinAndBlockUser $player 
-		availableCornersCentreSide $currentPlayer 
-		if [ $flag -eq 1 ]
+# function to play with computer
+function computer(){
+	moveCount=0;
+	while [[ $moveCount -le $TOTALCOUNT ]]
+	do
+		if [[ $currentPlayer == x ]]
 		then
-			row=$(((RANDOM%3)+1))
-			column=$(((RANDOM%3)+1))
+			read -p "Enter position between 1-9 : " position
+			#calculate row and column
+			row=$(((($position-1)/$ROW)+1))
+			column=$( calColumn $position ) 
 			placeMark $row $column
 		else
+			player="x";
+			playWinAndBlockUser $currentPlayer
+			playWinAndBlockUser $player 
+			availableCornersCentreSide $currentPlayer 
 			changePlayer $currentPlayer
 		fi
-	fi 
-done
+	done
+}
+
+#function for other player
+function otherPlayer(){
+	moveCount=0;
+	while [[ $moveCount -le $TOTALCOUNT ]]
+	do
+		if [[ $currentPlayer == x ]]
+		then
+			read -p "Enter position between 1-9 : " position
+			#calculate row and column
+			row=$(((($position-1)/$ROW)+1))
+			column=$( calColumn $position ) 
+			placeMark $row $column
+		else
+			read -p "Enter position b/w 1-9 : " position
+			row=$(((($position-1)/$ROW)+1))
+			column=$( calColumn $position )
+			placeMark $row $column
+		fi
+	done
+}
+#start execution
+reset
+read -p "Enter choice : 1.Computer 2.otherPlayer" inputForPlayer
+
+case $inputForPlayer in
+	1)
+		computer
+		;;
+	2)
+		otherPlayer
+		;;
+esac
+
 if [[ $gameStatus -eq 0 ]]
 then
 	echo "Match tie ! "
