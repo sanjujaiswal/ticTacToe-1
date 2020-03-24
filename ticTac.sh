@@ -125,8 +125,8 @@ function calColumn(){
 	echo $column
 }
 
-#if there are no avilable corner then select centre
-function availableCentre(){
+#set player mark at position
+function assignCornerCentreSide(){
 	if [[ $flag -eq 1 ]]
 	then
 		if [[ ${board[$2,$3]} == "-" ]]
@@ -140,27 +140,29 @@ function availableCentre(){
 	fi
 }
 
-#take available corners if niether of player wins
-function availableCorners(){
+#take available corners,centre and side if niether of player wins
+function availableCornersCentreSide(){
 	if [[ $flag -eq 1 ]]
 	then
+		#Take corners
 		for (( row=1;row<=$ROW;$((row+=2)) ))
 		do
 			for (( column=1;column<=$COLUMN;$((column+=2)) ))
 			do
-				if [[ ${board[$row,$column]} == "-" ]]
-				then
-					board[$row,$column]=$1
-					printBoard
-					gameStatus=0;
-					((moveCount++))
-					flag=0;
-				fi
+				assignCornerCentreSide $1 $row $column
 			done
-			if [[ $flag -eq 0 ]]
-			then
-				break;
-			fi
+		done
+
+		#Take Centre 
+		assignCornerCentreSide $1 $(($ROW/2+1)) $(($COLUMN/2+1))
+
+		#Take sides
+		for (( row=1;row<=$ROW;row++ ))
+		do
+			for (( column=1;column<=$COLUMN;column++ ))
+			do
+				assignCornerCentreSide $1 $row $column
+			done
 		done
 	fi
 }
@@ -218,10 +220,7 @@ do
 		player="x";
 		playWinAndBlockUser $currentPlayer
 		playWinAndBlockUser $player 
-		availableCorners $currentPlayer
-		row=$(($ROW/2+1))
-		column=$(($COLUMN/2+1))
-		availableCentre $currentPlayer $row $column 
+		availableCornersCentreSide $currentPlayer 
 		if [ $flag -eq 1 ]
 		then
 			row=$(((RANDOM%3)+1))
