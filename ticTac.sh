@@ -209,7 +209,7 @@ function playWinAndBlockUser(){
 # function to play with computer
 function computer(){
 	moveCount=0;
-	while [[ $moveCount -le $TOTALCOUNT ]]
+	while [[ $moveCount -ne $TOTALCOUNT ]]
 	do
 		if [[ $currentPlayer == x ]]
 		then
@@ -224,6 +224,7 @@ function computer(){
 			playWinAndBlockUser $player 
 			availableCornersCentreSide $currentPlayer 
 			changePlayer $currentPlayer
+			echo $moveCount
 		fi
 	done
 }
@@ -231,7 +232,7 @@ function computer(){
 #function for other player
 function otherPlayer(){
 	moveCount=0;
-	while [[ $moveCount -le $TOTALCOUNT ]]
+	while [[ $moveCount -ne $TOTALCOUNT ]]
 	do
 		if [[ $currentPlayer == x ]]
 		then
